@@ -4,11 +4,16 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-builder.Services.AddScoped<AiRecommendationService>();
+builder.Services.AddHttpClient<AiRecommendationService>();
 
 builder.Services.AddHttpClient<WeatherService>(client =>
 {
-    client.Timeout = TimeSpan.FromSeconds(10);
+    client.Timeout = TimeSpan.FromSeconds(20);
+}).ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
+{
+    UseProxy = true,
+    Proxy = System.Net.WebRequest.DefaultWebProxy,
+    UseDefaultCredentials = true
 });
 
 

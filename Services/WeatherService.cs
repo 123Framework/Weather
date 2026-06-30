@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
 using WeatherApp.Models;
+using static System.Net.WebRequestMethods;
 
 namespace WeatherApp.Services
 {
@@ -20,7 +21,7 @@ namespace WeatherApp.Services
             try
             {
                 string apiKey = _configuration["WeatherApi:ApiKey"];
-                string url = $"https://api.openweathermap.org/data/2.5/weather?q={city}&appid={apiKey}&units=metric";
+                string url =  $"https://api.weatherapi.com/v1/current.json?key={apiKey}&q={city}&aqi=no";
                 var response = await _httpClient.GetAsync(url);
 
                 var responseText = await response.Content.ReadAsStringAsync();
@@ -34,14 +35,15 @@ namespace WeatherApp.Services
                 {
                     PropertyNameCaseInsensitive = true,
                 });
-                if (weather == null || weather.Main == null || weather.Weather == null || weather.Weather.Count == 0 || weather.Wind == null) return null;
+                if (weather == null ) return null;
 
                 return new WeatherViewModel
                 {
-                    City = city,
-                    Temperature = weather.Main.Temp,
-                    Description = weather.Weather[0].Description,
-                    WindSpeed = weather.Wind.Speed
+                    City = weather.Location.Name,
+                    Temperature = weather.Current.Temp_C,
+                    Description = weather.Current.Condition.Text,
+                    WindSpeed = Math.Round(weather.Current.Wind_Kph / 3.6,1)
+
                 };
             }
             catch (Exception ex)

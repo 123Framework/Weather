@@ -30,7 +30,7 @@ namespace WeatherApp.Controllers
                 ViewBag.Error = "Не удалось получить проноз. проевдите интернет, api-key , или другой город";
                 return View();  
             }
-            weather.Recommendation = _aiService.GetRecommendation(weather.Temperature, weather.Description, weather.WindSpeed);
+            weather.Recommendation = await _aiService.GetRecommendationAsync(weather.Temperature, weather.Description, weather.WindSpeed);
 
             return View(weather);
         }
